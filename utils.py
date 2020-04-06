@@ -11,7 +11,7 @@ def chunks(l, n):
     return [l[i:i+n] for i in range(0, len(l), n)]
 
 
-def load_and_preprocess(path, sr=16000, n_mels=128, n_fft=2048, hop_length=512, slice_len=3):
+def audio_to_spectrogram(path, sr=16000, n_mels=128, n_fft=2048, hop_length=512, slice_len=3):
     """
     Loads audio, splits it into smaller chunks of length slice_len and creates a mel
     scale spectrogram for each of these. Returns a list of spectrograms reshaped
