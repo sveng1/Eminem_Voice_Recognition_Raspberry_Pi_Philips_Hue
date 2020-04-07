@@ -11,6 +11,42 @@ def chunks(l, n):
     return [l[i:i+n] for i in range(0, len(l), n)]
 
 
+def audio2spectrogram(audio, sr=16000, n_mels=128, n_fft=2048, hop_length=512, slice_len=3):
+    """
+    Splits audio into smaller chunks of length slice_len and creates a mel
+    scale spectrogram for each of these. Returns a list of spectrograms reshaped
+    into (n_mels, time (frames), 1)
+    :param audio: array, audio
+    :param sr: int, sampling rate
+    :param n_mels: int, number of mel bins
+    :param n_fft: int, fast fourier transform window size
+    :param hop_length: int, hop length
+    :param slice_len: int, length of audio slice in seconds
+    :return: images: list, spectrogram arrays of each slice in audio
+    """
+
+    # Reshape audio array
+    if len(audio.shape) > 1:
+        audio = audio.reshape(-1)
+
+    slices = chunks(audio, sr * slice_len)
+
+    images = []
+
+    for i in range(len(slices)):
+        S = librosa.feature.melspectrogram(slices[i],
+                                           sr=sr,
+                                           n_mels=n_mels,
+                                           n_fft=n_fft,
+                                           hop_length=hop_length)
+        log_S = librosa.amplitude_to_db(S, ref=1.0)
+        log_S = log_S.reshape(log_S.shape[0], log_S.shape[1], 1)
+        images.append(log_S)
+    images = np.array(images[:-1])
+
+    return images
+
+
 def load_audio_to_spectrogram(path, sr=16000, n_mels=128, n_fft=2048, hop_length=512, slice_len=3):
     """
     Loads audio, splits it into smaller chunks of length slice_len and creates a mel
@@ -28,20 +64,23 @@ def load_audio_to_spectrogram(path, sr=16000, n_mels=128, n_fft=2048, hop_length
     x, sr = librosa.load(path, sr=sr)
 
     # Slice into parts of slice_len seconds
-    slices = chunks(x, sr * slice_len)
+    # slices = chunks(x, sr * slice_len)
+    #
+    # images = []
+    #
+    # for i in range(len(slices)):
+    #     S = librosa.feature.melspectrogram(slices[i],
+    #                                        sr=sr,
+    #                                        n_mels=n_mels,
+    #                                        n_fft=n_fft,
+    #                                        hop_length=hop_length)
+    #     log_S = librosa.amplitude_to_db(S, ref=1.0)
+    #     log_S = log_S.reshape(log_S.shape[0], log_S.shape[1], 1)
+    #     images.append(log_S)
+    # images = np.array(images[:-1])
 
-    images = []
-
-    for i in range(len(slices)):
-        S = librosa.feature.melspectrogram(slices[i],
-                                           sr=sr,
-                                           n_mels=n_mels,
-                                           n_fft=n_fft,
-                                           hop_length=hop_length)
-        log_S = librosa.amplitude_to_db(S, ref=1.0)
-        log_S = log_S.reshape(log_S.shape[0], log_S.shape[1], 1)
-        images.append(log_S)
-    images = np.array(images[:-1])
+    images = audio2spectrogram(x, sr=sr, n_mels=n_mels, n_fft=n_fft,
+                               hop_length=hop_length, slice_len=slice_len)
 
     return images
 
