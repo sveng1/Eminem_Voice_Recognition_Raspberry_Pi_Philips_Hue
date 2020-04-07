@@ -2,8 +2,8 @@ import librosa
 import numpy as np
 from tqdm import tqdm
 import os
+from hue_functions import set_color, set_color_all, get_connected_lights
 from tensorflow.keras.utils import to_categorical
-
 
 
 def chunks(l, n):
@@ -29,6 +29,9 @@ def audio2spectrogram(audio, sr=16000, n_mels=128, n_fft=2048, hop_length=512, s
     if len(audio.shape) > 1:
         audio = audio.reshape(-1)
 
+    # Check if audio length is divible by chosen length (seconds * sr)
+    remainder = audio.shape[0] % (sr * slice_len)
+
     slices = chunks(audio, sr * slice_len)
 
     images = []
@@ -42,8 +45,12 @@ def audio2spectrogram(audio, sr=16000, n_mels=128, n_fft=2048, hop_length=512, s
         log_S = librosa.amplitude_to_db(S, ref=1.0)
         log_S = log_S.reshape(log_S.shape[0], log_S.shape[1], 1)
         images.append(log_S)
-    images = np.array(images[:-1])
 
+    if remainder != 0:
+        print('removing last spectrogram frame as it is too short')
+        images = images[:-1]
+
+    images = np.array(images)
     return images
 
 
@@ -62,22 +69,6 @@ def load_audio_to_spectrogram(path, sr=16000, n_mels=128, n_fft=2048, hop_length
     """
 
     x, sr = librosa.load(path, sr=sr)
-
-    # Slice into parts of slice_len seconds
-    # slices = chunks(x, sr * slice_len)
-    #
-    # images = []
-    #
-    # for i in range(len(slices)):
-    #     S = librosa.feature.melspectrogram(slices[i],
-    #                                        sr=sr,
-    #                                        n_mels=n_mels,
-    #                                        n_fft=n_fft,
-    #                                        hop_length=hop_length)
-    #     log_S = librosa.amplitude_to_db(S, ref=1.0)
-    #     log_S = log_S.reshape(log_S.shape[0], log_S.shape[1], 1)
-    #     images.append(log_S)
-    # images = np.array(images[:-1])
 
     images = audio2spectrogram(x, sr=sr, n_mels=n_mels, n_fft=n_fft,
                                hop_length=hop_length, slice_len=slice_len)
@@ -124,3 +115,22 @@ def load_train_data(one_folder, zero_folder, sr=16000, n_mels=128, n_fft=2048, h
     y = to_categorical(y)
 
     return X, y
+
+
+def eminem_light(bridge_url, user, previous_color, prediction):
+    """
+    Changes light depending on prediction
+    :param bridge_url: str, hue bridge url
+    :param user: str, hue user id
+    :param previous_color: list, color for each light ex: [[hue,sat],[hue,sat]]
+    :param prediction: int, 0 or 1, prediction from model
+    :return: None
+    """
+
+    lights = get_connected_lights(bridge_url, user)
+
+    if prediction == 1:
+        set_color_all(bridge_url, user, hue=38749, sat=162)
+    else:
+        for i in range(len(lights)):
+            set_color(light=lights[i], hue=previous_color[i][0], sat=previous_color[i][1])
