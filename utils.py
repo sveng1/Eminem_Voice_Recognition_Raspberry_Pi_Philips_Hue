@@ -2,7 +2,7 @@ import librosa
 import numpy as np
 from tqdm import tqdm
 import os
-from hue_functions import set_color, set_color_all, get_connected_lights
+from hue_functions import set_color, set_color_all, get_connected_lights, get_light_state
 from tensorflow.keras.utils import to_categorical
 
 
@@ -117,20 +117,37 @@ def load_train_data(one_folder, zero_folder, sr=16000, n_mels=128, n_fft=2048, h
     return X, y
 
 
-def eminem_light(bridge_url, user, previous_color, prediction):
+def eminem_light(bridge_url, user, prediction, state, previous_color):
     """
     Changes light depending on prediction
     :param bridge_url: str, hue bridge url
     :param user: str, hue user id
-    :param previous_color: list, color for each light ex: [[hue,sat],[hue,sat]]
     :param prediction: int, 0 or 1, prediction from model
-    :return: None
+    :param state: str, 'eminem' or 'not eminem'
+    :param previous_color: list, color for each light ex: [[hue,sat],[hue,sat]]
+    :return: state, previous_color
     """
 
     lights = get_connected_lights(bridge_url, user)
 
+    # if it is eminem
     if prediction == 1:
-        set_color_all(bridge_url, user, hue=38749, sat=162)
-    else:
+        # if it was also eminem before
+        if state == 'eminem':
+            color = [[get_light_state(l)[key] for key in ['hue', 'sat']] for l in lights]
+            # If it was already eminem and the color was changed in the mean time
+            if color != [[38749, 162], [38749, 162], [38749, 162]]:
+                previous_color = color
+                set_color_all(bridge_url, user, hue=38749, sat=162)
+        # if it was not eminem before
+        elif state == 'not eminem':
+            previous_color = [[get_light_state(l)[key] for key in ['hue', 'sat']] for l in lights]
+            set_color_all(bridge_url, user, hue=38749, sat=162)
+            state = 'eminem'
+
+    elif prediction == 0:
         for i in range(len(lights)):
             set_color(light=lights[i], hue=previous_color[i][0], sat=previous_color[i][1])
+            state = 'not eminem'
+
+    return state, previous_color
