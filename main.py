@@ -1,5 +1,6 @@
 from tensorflow.keras.models import load_model
 import time
+import os
 from utils import audio2spectrogram
 import sounddevice as sd
 from utils import audio2spectrogram, eminem_light
@@ -15,7 +16,7 @@ print('Loaded model from "{}".'.format(model_path))
 time_step = 6
 starttime=time.time()
 
-sr = 16000
+sr = 48000
 seconds = 3
 frames = int(seconds * sr)
 print('Sampling rate: {}, recording length: {} seconds'.format(sr, seconds))
@@ -39,7 +40,7 @@ try:
 
         # Predict eminem or not eminem
         prediction = np.random.randint(2, size=1)
-        #prediction = np.argmax(model.predict(spec)[0])
+        # prediction = np.argmax(model.predict(spec)[0])
 
         # Use prediction to set light
         if not (state == 'not eminem' and prediction == 0):
