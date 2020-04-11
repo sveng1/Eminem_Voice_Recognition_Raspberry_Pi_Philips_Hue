@@ -4,6 +4,7 @@ from tqdm import tqdm
 import os
 from hue_functions import set_color, set_color_all, get_connected_lights, get_light_state
 from tensorflow.keras.utils import to_categorical
+from scipy.signal import resample
 
 
 def chunks(l, n):
@@ -11,7 +12,7 @@ def chunks(l, n):
     return [l[i:i+n] for i in range(0, len(l), n)]
 
 
-def audio2spectrogram(audio, sr=16000, n_mels=128, n_fft=2048, hop_length=512, slice_len=3):
+def audio2spectrogram(audio, sr, n_mels=128, n_fft=2048, hop_length=512, slice_len=3):
     """
     Splits audio into smaller chunks of length slice_len and creates a mel
     scale spectrogram for each of these. Returns a list of spectrograms reshaped
@@ -28,6 +29,11 @@ def audio2spectrogram(audio, sr=16000, n_mels=128, n_fft=2048, hop_length=512, s
     # Reshape audio array
     if len(audio.shape) > 1:
         audio = audio.reshape(-1)
+
+    # Resample to sampling rate of 16000
+    if sr != 16000:
+        audio = resample(audio, slice_len*16000)
+        sr = 16000
 
     # Check if audio length is divible by chosen length (seconds * sr)
     remainder = audio.shape[0] % (sr * slice_len)

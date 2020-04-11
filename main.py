@@ -1,12 +1,10 @@
-from tensorflow.keras.models import load_model
 import time
-import os
-from utils import audio2spectrogram
-import sounddevice as sd
-from utils import audio2spectrogram, eminem_light
 import numpy as np
-from hue_functions import get_light_state, get_connected_lights
+import sounddevice as sd
+from tensorflow.keras.models import load_model
+from utils import audio2spectrogram, eminem_light
 from user import bridge_url, hue_user
+from hue_functions import get_light_state, get_connected_lights
 
 
 model_path = 'crnn.h5'
@@ -36,7 +34,7 @@ try:
         recording = recording.reshape(-1)
 
         # Tranform audio to spectrograms
-        spec = audio2spectrogram(recording)
+        spec = audio2spectrogram(audio=recording, sr=48000)
 
         # Predict eminem or not eminem
         prediction = np.random.randint(2, size=1)
@@ -46,8 +44,7 @@ try:
         if not (state == 'not eminem' and prediction == 0):
             state, previous_color = eminem_light(bridge_url, hue_user, prediction, state, previous_color)
             time.sleep(time_step - ((time.time() - starttime) % time_step))
-        print('Detecting:', state)
-
+        print('Detected:', state)
         time.sleep(time_step - ((time.time() - starttime) % time_step))
 except KeyboardInterrupt:
     print('Stopped by user')
