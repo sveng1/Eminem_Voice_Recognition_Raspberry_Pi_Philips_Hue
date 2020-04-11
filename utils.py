@@ -12,13 +12,14 @@ def chunks(l, n):
     return [l[i:i+n] for i in range(0, len(l), n)]
 
 
-def audio2spectrogram(audio, sr, n_mels=128, n_fft=2048, hop_length=512, slice_len=3):
+def audio2spectrogram(audio, sr, audio_length, n_mels=128, n_fft=2048, hop_length=512, slice_len=3):
     """
     Splits audio into smaller chunks of length slice_len and creates a mel
     scale spectrogram for each of these. Returns a list of spectrograms reshaped
     into (n_mels, time (frames), 1)
     :param audio: array, audio
     :param sr: int, sampling rate
+    :param audio_length: int, length of recorded audio in seconds
     :param n_mels: int, number of mel bins
     :param n_fft: int, fast fourier transform window size
     :param hop_length: int, hop length
@@ -32,7 +33,7 @@ def audio2spectrogram(audio, sr, n_mels=128, n_fft=2048, hop_length=512, slice_l
 
     # Resample to sampling rate of 16000
     if sr != 16000:
-        audio = resample(audio, slice_len*16000)
+        audio = resample(audio, audio_length*16000)
         sr = 16000
 
     # Check if audio length is divible by chosen length (seconds * sr)
