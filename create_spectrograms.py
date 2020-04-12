@@ -1,16 +1,22 @@
-from utils import load_audio_to_spectrogram
 import os
 import numpy as np
 from tqdm import tqdm
+from utils import load_audio_to_spectrogram
 
 
 eminem_folder = ''
 not_eminem_folder = ''
 
+# sample rate of recorded audio files
 sr = 48000
+
+# length of recorded audio files in seconds
 audio_length = 30
+
+# data sample length
 slice_len = 3
 
+# To use the loop, each file must have same length (here 30 sec)
 print('Loading recorded eminem audio')
 eminem_spectrograms = []
 for filename in tqdm(os.listdir(eminem_folder)):

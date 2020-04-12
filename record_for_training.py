@@ -3,18 +3,21 @@ from scipy.io.wavfile import write
 import datetime
 
 
+# Sampling rate for recording
 sr = 48000
-seconds = 9
+
+# Length of recording in seconds
+seconds = 30
 frames = int(sr*seconds)
 
-save_path = '/media/pi/TOSHIBA EXT/pi/audio_data/test'
-i = 0
+# Path to save recordings
+save_path = ''
 
 print('Sampling rate: {}, recording length: {} seconds'.format(sr, seconds))
 print('Save under {}'.format(save_path))
 
-
 print('Started recording')
+i = 0
 try:
     while True:
         print(datetime.datetime.now())

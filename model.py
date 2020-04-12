@@ -3,7 +3,7 @@ from tensorflow.keras.layers import Dense, Activation, Dropout, Conv2D, MaxPooli
 from tensorflow.keras.layers import BatchNormalization, GRU, Permute, Reshape
 
 
-# This model architecture is inspired by https://github.com/ZainNasrullah/music-artist-classification-crnn
+# The model architecture is inspired by https://github.com/ZainNasrullah/music-artist-classification-crnn
 def crnn(first_conv_size=64, other_convs_size=128, gru_size=32, dense_activation='softmax', input_shape=(128, 94, 1)):
 
     frequency_axis = 1
@@ -40,7 +40,7 @@ def crnn(first_conv_size=64, other_convs_size=128, gru_size=32, dense_activation
     resize_shape = model.output_shape[2] * model.output_shape[3]
     model.add(Reshape((model.output_shape[1], resize_shape)))
 
-    # Recurrent layer
+    # Recurrent layers
     model.add(GRU(gru_size, return_sequences=True, activation='tanh'))
     model.add(GRU(gru_size, return_sequences=False, activation='tanh'))
     model.add(Dropout(0.3))

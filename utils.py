@@ -1,13 +1,16 @@
 import librosa
 import numpy as np
-from tqdm import tqdm
-import os
-from hue_functions import set_color, set_color_all, get_connected_lights, get_light_state
-from tensorflow.keras.utils import to_categorical
 from scipy.signal import resample
+from hue_functions import set_color, set_color_all, get_connected_lights, get_light_state
 
 
 def chunks(l, n):
+    """
+    Splits list into chunks of size n
+    :param l: list, array
+    :param n: int, length of chunks
+    :return: list of equally sized lists
+    """
     n = max(1, n)
     return [l[i:i+n] for i in range(0, len(l), n)]
 
@@ -84,47 +87,6 @@ def load_audio_to_spectrogram(path, sr, audio_length, slice_len, n_mels=128, n_f
     return images
 
 
-def load_train_data(one_folder, zero_folder, sr=16000, n_mels=128, n_fft=2048, hop_length=512, slice_len=3):
-    """
-    Loads all training data from two folders using load_and_preprocess
-    :param one_folder: path to first folder
-    :param zero_folder: path to second folder
-    :param sr: int, sampling rate
-    :param n_mels: int, number of mel bins
-    :param n_fft: int, fast fourier transform window size
-    :param hop_length: int, hop length
-    :param slice_len: int, length of audio slice in seconds
-    :return: X, y: training data and labels
-    """
-    # Load all from class one
-    print('Loading data from class one')
-    one = []
-    for filename in tqdm(os.listdir(one_folder)):
-        if filename.endswith('.wav'):
-            images = load_and_preprocess(one_folder + filename, sr=sr, n_mels=n_mels,
-                                         n_fft=n_fft, hop_length=hop_length, slice_len=slice_len)
-            one.extend(images)
-
-    # Load all from class zero
-    print('Loading data from class zero')
-    zero = []
-    print('Loading data from class zero')
-    for filename in tqdm(os.listdir(zero_folder)):
-        if filename.endswith('.wav'):
-            images = load_and_preprocess(zero_folder + filename, sr=sr, n_mels=n_mels,
-                                         n_fft=n_fft, hop_length=hop_length, slice_len=slice_len)
-            zero.extend(images)
-
-    # Concatenate images
-    X = np.array(one + zero)
-
-    # Create labels
-    y = np.array([1] * len(one) + [0] * len(zero))
-    y = to_categorical(y)
-
-    return X, y
-
-
 def eminem_light(bridge_url, user, prediction, state, previous_color):
     """
     Changes light depending on prediction
@@ -138,21 +100,21 @@ def eminem_light(bridge_url, user, prediction, state, previous_color):
 
     lights = get_connected_lights(bridge_url, user)
 
-    # if it is eminem
+    # predicted eminem
     if prediction == 1:
-        # if it was also eminem before
+        # Check if eminem was previously predicted and the color was changed in the mean time
         if state == 'eminem':
             color = [[get_light_state(l)[key] for key in ['hue', 'sat']] for l in lights]
-            # If it was already eminem and the color was changed in the mean time
             if color != [[38749, 162], [38749, 162], [38749, 162]]:
                 previous_color = color
                 set_color_all(bridge_url, user, hue=38749, sat=162)
-        # if it was not eminem before
+        # If eminem was not predicted previously, save current color and change color
         elif state == 'not eminem':
             previous_color = [[get_light_state(l)[key] for key in ['hue', 'sat']] for l in lights]
             set_color_all(bridge_url, user, hue=38749, sat=162)
             state = 'eminem'
 
+    # predicted not eminem, change each light back to its previous color
     elif prediction == 0:
         for i in range(len(lights)):
             set_color(light=lights[i], hue=previous_color[i][0], sat=previous_color[i][1])
