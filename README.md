@@ -1,4 +1,4 @@
-# Eminem_Voice_Recognition_Raspberry_Pi_Philips_Hue
+# Eminem Voice Recognition with Raspberry Pi and Philips Hue
 
 A while ago I had an incident where a friend and I were relaxing on the couch, listening to music just flowing from Spotify. A song comes on and I say "Is that Eminem?". My friends says "yeah I think it's Eminem", and I'm like "No, I'm not sure it's him", "I'm pretty sure it's him" and so on, and eventually we have to go check on her phone find out whether or not it is Eminem singing. 
 
