@@ -7,7 +7,7 @@ from user import bridge_url, hue_user
 from hue_functions import get_light_state, get_connected_lights
 
 
-model_path = 'crnn.h5'
+model_path = 'model_recorded.h5'
 model = load_model(model_path)
 print('Loaded model from "{}".'.format(model_path))
 
