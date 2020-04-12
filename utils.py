@@ -12,7 +12,7 @@ def chunks(l, n):
     return [l[i:i+n] for i in range(0, len(l), n)]
 
 
-def audio2spectrogram(audio, sr, audio_length, n_mels=128, n_fft=2048, hop_length=512, slice_len=3):
+def audio2spectrogram(audio, sr, audio_length, slice_len, n_mels=128, n_fft=2048, hop_length=512):
     """
     Splits audio into smaller chunks of length slice_len and creates a mel
     scale spectrogram for each of these. Returns a list of spectrograms reshaped
@@ -20,10 +20,10 @@ def audio2spectrogram(audio, sr, audio_length, n_mels=128, n_fft=2048, hop_lengt
     :param audio: array, audio
     :param sr: int, sampling rate
     :param audio_length: int, length of recorded audio in seconds
+    :param slice_len: int, length of audio slice in seconds
     :param n_mels: int, number of mel bins
     :param n_fft: int, fast fourier transform window size
     :param hop_length: int, hop length
-    :param slice_len: int, length of audio slice in seconds
     :return: images: list, spectrogram arrays of each slice in audio
     """
 
@@ -61,23 +61,24 @@ def audio2spectrogram(audio, sr, audio_length, n_mels=128, n_fft=2048, hop_lengt
     return images
 
 
-def load_audio_to_spectrogram(path, sr=16000, n_mels=128, n_fft=2048, hop_length=512, slice_len=3):
+def load_audio_to_spectrogram(path, sr, audio_length, slice_len, n_mels=128, n_fft=2048, hop_length=512):
     """
     Loads audio, splits it into smaller chunks of length slice_len and creates a mel
     scale spectrogram for each of these. Returns a list of spectrograms reshaped
     into (n_mels, time (frames), 1)
     :param path: str, path to audio file
     :param sr: int, sampling rate
+    :param audio_length: int, input length in seconds
+    :param slice_len: int, length of audio slice in seconds
     :param n_mels: int, number of mel bins
     :param n_fft: int, fast fourier transform window size
     :param hop_length: int, hop length
-    :param slice_len: int, length of audio slice in seconds
     :return: images: list, spectrogram arrays of each slice in audio
     """
 
     x, sr = librosa.load(path, sr=sr)
 
-    images = audio2spectrogram(x, sr=sr, n_mels=n_mels, n_fft=n_fft,
+    images = audio2spectrogram(audio=x, sr=sr, audio_length=audio_length, n_mels=n_mels, n_fft=n_fft,
                                hop_length=hop_length, slice_len=slice_len)
 
     return images

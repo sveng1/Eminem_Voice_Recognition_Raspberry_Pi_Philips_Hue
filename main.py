@@ -34,11 +34,11 @@ try:
         recording = recording.reshape(-1)
 
         # Tranform audio to spectrograms
-        spec = audio2spectrogram(audio=recording, sr=48000)
+        spec = audio2spectrogram(audio=recording, sr=48000, audio_length=seconds, slice_len=seconds)
 
         # Predict eminem or not eminem
-        prediction = np.random.randint(2, size=1)
-        # prediction = np.argmax(model.predict(spec)[0])
+        #prediction = np.random.randint(2, size=1)
+        prediction = np.argmax(model.predict(spec)[0])
 
         # Use prediction to set light
         if not (state == 'not eminem' and prediction == 0):
