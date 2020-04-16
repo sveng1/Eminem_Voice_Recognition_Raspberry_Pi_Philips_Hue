@@ -8,7 +8,7 @@ from tensorflow.keras.models import load_model
 
 
 # Load trained crnn model
-model_path = 'model_recorded.h5'
+model_path = 'eminem_model.h5'
 model = load_model(model_path)
 print('Loaded model from "{}".'.format(model_path))
 
@@ -16,7 +16,7 @@ print('Loaded model from "{}".'.format(model_path))
 time_step = 6
 
 # Sample rate for recording
-sr = 48000
+sr = 16000
 
 # Length of recording
 seconds = 3
@@ -38,8 +38,8 @@ try:
         sd.wait()
         recording = recording.reshape(-1)
 
-        # Tranform audio to spectrograms
-        spec = audio2spectrogram(audio=recording, sr=48000, audio_length=seconds, slice_len=seconds)
+        # Transform audio to spectrograms
+        spec = audio2spectrogram(audio=recording, sr=sr, audio_length=seconds, slice_len=seconds)
 
         # Predict class
         prediction = np.argmax(model.predict(spec)[0])
