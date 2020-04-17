@@ -36,7 +36,12 @@ Two-three hours of Eminem singing and two-three hours of other sounds (silence, 
 ### Processing audio data
 Run create_spectrograms.py. <br>
 This script opens the audio files, splits them into parts of 3 seconds and transforms them to mel scaled short-time Fourier transform spectrograms and saves these. <br>
-The hyperparameters used in processing are the same as in Nasrulla and Zhao (2019)([article](https://arxiv.org/pdf/1901.04555.pdf), [github](https://github.com/ZainNasrullah/music-artist-classification-crnn/blob/master/src/utility.py))
+The hyperparameters used in processing are the same as in Nasrulla and Zhao (2019)([article](https://arxiv.org/pdf/1901.04555.pdf), [github](https://github.com/ZainNasrullah/music-artist-classification-crnn/blob/master/src/utility.py)). <br>
+Shown below are two spectrograms, the first with the sound of Eminem singing, the second with the sound of something else.
+
+![Spectrogram with Eminem singing](/spectrograms/eminem_spectrogram.png)
+![Spectrogram not with Eminem singing](/spectrograms/not_eminem_spectrogram.png)
+
 
 ### Training recognition model
 Run train_model.py <br>
