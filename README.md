@@ -4,7 +4,7 @@ A while ago I had an incident. A friend and I were relaxing at my place, music w
 
 It was a very uncomfortable situation, and to make sure it doesn't happen again, I have now set up a system in my apartment that tells me whenever it is Eminem singing or rapping on my speaker. 
 
-A voice recognition model trained on Eminem's voice and other sounds is running on a Raspberry Pi, and every time it detects Eminem's voice, it changes the Philips Hue light bulps in my apartment to light blue (because, as everyone knows, light blue is Eminem's favourite color). Now I can finally relax and don't have to embarrass myself by having to check on my phone if the music playing is really Eminem.
+A voice recognition model trained on Eminem's voice and other sounds is running on a Raspberry Pi, and every time it detects Eminem's voice, it changes the Philips Hue light bulbs in my apartment to light blue (because, as everyone knows, light blue is Eminem's favourite color). Now I can finally relax and don't have to embarrass myself by having to check on my phone if the music playing is really Eminem.
 
 ### Set up Raspberry Pi
 The Raspberry Pi used is a 3b+ model with Raspbian Buster. <br>
