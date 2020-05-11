@@ -6,6 +6,8 @@ It was a very uncomfortable situation, and to make sure it doesn't happen again,
 
 A voice recognition model trained on Eminem's voice and other sounds is running on a Raspberry Pi, and every time it detects Eminem's voice, it changes the Philips Hue light bulbs in my apartment to light blue (because, as everyone knows, light blue is Eminem's favourite color). Now I can finally relax and don't have to embarrass myself by having to check on my phone if the music playing is really Eminem.
 
+This [story](https://medium.com/@selina.veng/the-real-slim-shady-teaching-your-smart-home-to-detect-eminem-a635f81ddac) on Medium is a more detailed description of the steps taken to set up the system.
+
 ### Set up Raspberry Pi
 The Raspberry Pi used is a 3b+ model with Raspbian Buster. <br>
 The USB microphone is just a standard cheap omnidirectional microphone. The microphone should be visible in python with `sounddevice.query_devices()` . <br>
